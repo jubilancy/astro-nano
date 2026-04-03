@@ -18,10 +18,16 @@ const { title, description } = Astro.props;
     <Head title={`${title} | ${SITE.NAME}`} description={description} />
   </head>
   <body>
-    <Header />
-    <main>
+    <div class="container-nav">
+      <Header />
+    </div>
+
+    <main class="container-prose py-20">
       <slot />
     </main>
-    <Footer />
+
+    <div class="container-nav">
+      <Footer />
+    </div>
   </body>
 </html>

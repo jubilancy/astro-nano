@@ -4,7 +4,12 @@
     "strictNullChecks": true,
     "baseUrl": ".",
     "paths": {
-      "@*": ["./src/*"]
+      "@layouts/*": ["./src/layouts/*"],
+      "@components/*": ["./src/components/*"],
+      "@styles/*": ["./src/styles/*"],
+      "@lib/*": ["./src/lib/*"],
+      "@consts": ["./src/consts.ts"],
+      "@/*": ["./src/*"]
     }
   }
 }

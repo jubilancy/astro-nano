@@ -1,34 +1,30 @@
 ---
-import Container from "@components/Container.astro";
-import Link from "@components/Link.astro";
 import { SITE } from "@consts";
 ---
 
-<header>
-  <Container>
-    <div class="flex flex-wrap gap-y-2 justify-between">
-      <Link href="/" underline={false}>
-        <div class="font-semibold">
-          {SITE.NAME}
-        </div>
-      </Link>
-      <nav class="flex gap-1">
-        <Link href="/blog">
-          blog
-        </Link>
-        <span>
-          {`/`}
-        </span>
-        <Link href="/work">
-          work
-        </Link>
-        <span>
-          {`/`}
-        </span>
-        <Link href="/projects">
-          projects
-        </Link>
-      </nav>
-    </div>
-  </Container>
+<header class="py-10">
+  <div class="container-nav flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <a href="/" class="font-mono font-bold text-xl tracking-tighter no-underline hover:text-[var(--color-accent)] transition-colors">
+      {SITE.NAME.toLowerCase()}
+    </a>
+
+    <nav class="flex items-center gap-6 font-mono text-sm uppercase tracking-widest text-[var(--color-text-body)]">
+      <a href="/notes" class="no-underline hover:text-[var(--color-accent)] transition-colors">
+        notes
+      </a>
+      <a href="/archive" class="no-underline hover:text-[var(--color-accent)] transition-colors">
+        archive
+      </a>
+      <a href="/about" class="no-underline hover:text-[var(--color-accent)] transition-colors">
+        about
+      </a>
+    </nav>
+  </div>
 </header>
+
+<style>
+  /* This ensures the header doesn't use the default Nano underline logic */
+  header a {
+    text-decoration: none !important;
+  }
+</style>
