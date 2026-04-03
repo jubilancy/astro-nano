@@ -1,159 +1,147 @@
 ---
 import { getCollection } from "astro:content";
-import Container from "@components/Container.astro";
 import PageLayout from "@layouts/PageLayout.astro";
-import ArrowCard from "@components/ArrowCard.astro";
-import Link from "@components/Link.astro";
-import { dateRange } from "@lib/utils";
-import { SITE, HOME, SOCIALS } from "@consts";
+import { SITE } from "@consts";
+// Added the icon import here
+import { Icon } from "astro-icon/components";
 
-const blog = (await getCollection("blog"))
-  .filter(post => !post.data.draft)
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0,SITE.NUM_POSTS_ON_HOMEPAGE);
+// 1. List every collection you want to display
+const collectionsToFetch = [
+  "blog",
+  "notes",
+  "guides",
+  "tools",
+  "recipes",
+  "research",
+  "lists",
+  "links",
+  "favorite",
+  "post",
+  "archive",
+  "computer",
+  "series",
+  "packages",
+  "blogroll",
+];
 
-const projects = (await getCollection("projects"))
-  .filter(project => !project.data.draft)
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0,SITE.NUM_PROJECTS_ON_HOMEPAGE);
-
-const allwork = (await getCollection("work"))
-  .sort((a, b) => new Date(b.data.dateStart).valueOf() - new Date(a.data.dateStart).valueOf())
-  .slice(0,SITE.NUM_WORKS_ON_HOMEPAGE);
-
-const work = await Promise.all(
-  allwork.map(async (item) => {
-    const { Content } = await item.render();
-    return { ...item, Content };
-  })
+// 2. Fetch all collections simultaneously
+const allCollections = await Promise.all(
+  collectionsToFetch.map((name) => getCollection(name as any)),
 );
 
+// 3. Flatten, filter, and sort across ALL folders
+const posts = (allCollections.flat() as any[])
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 10);
 ---
 
-<PageLayout title={HOME.TITLE} description={HOME.DESCRIPTION}>
-  <Container>
-    <h4 class="animate font-semibold text-black dark:text-white">
-      Hi, I'm Nano <span class="text-xl">👋🏻</span> 
-    </h4>
-    <div class="space-y-16">
-      <section>
-        <article class="space-y-4">
-          <p class="animate">
-            I am a minimal, seo friendly, accessible portfolio and blog for developers. 
-            I am an even more lightweight version of my popular theme
-            <Link href="https://github.com/markhorn-dev/astro-sphere" aria-label="Astro Sphere on Github" external>
-              Astro Sphere
-            </Link>.
-            I have a lighthouse scores of 100 across the board for performance, 
-            accesibility, best practices and SEO.
-          </p>
-          <p class="animate">
-            I come packed with full type safety, a sitemap, an rss feed, markdown 
-            and mdx support (use components in your markdown) through astro integrations.
-            I am styled with tailwind and come preconfigured with light, dark and 
-            system/os theme preferences out of the box.
-          </p>
-          <p class="animate">
-            Visit
-            <Link href="https://github.com/markhorn-dev/astro-nano" aria-label="Astro Nano on Github" external>
-              Astro Nano on Github
-            </Link>
-            to fork the repository, read the docs or one-click deploy on Vercel or Netlify. 
-          </p>
-        </article>
-      </section>
+<PageLayout title="Home" description={SITE.DESCRIPTION}>
+  <div class="space-y-16">
+    <section class="animate space-y-4">
+      <h1>
+        hi, i'm eliana (✿◠‿◠)
+      </h1>
 
-      <section class="animate space-y-6">
-        <div class="flex flex-wrap gap-y-2 items-center justify-between">
-          <h5 class="font-semibold text-black dark:text-white">
-            Latest posts
-          </h5>
-          <Link href="/blog">
-            See all posts
-          </Link>
-        </div>
-        <ul class="flex flex-col gap-4">
-          {blog.map(post => (
-            <li>
-              <ArrowCard entry={post} />
-            </li>
-          ))}
-        </ul>
-      </section>
+      <div
+        class="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-400"
+      >
+        𓆝 𓆟 𓆞 𓆟 𓆝 𓆟 𓆞 𓆟 𓆝 𓆟 𓆞 𓆟 𓆝 𓆟 𓆞 𓆟 𓆝
+      </div>
 
-      <section class="animate space-y-6">
-        <div class="flex flex-wrap gap-y-2 items-center justify-between">
-          <h5 class="font-semibold text-black dark:text-white">
-            Work Experience
-          </h5>
-          <Link href="/work">
-            See all work
-          </Link>
-        </div>
-        <ul class="flex flex-col space-y-4">
-          {work.map(entry => (
-            <li>
-              <div class="text-sm opacity-75">
-                {dateRange(entry.data.dateStart, entry.data.dateEnd)}
-              </div>
-              <div class="font-semibold text-black dark:text-white">
-                {entry.data.company}
-              </div>
-              <div class="text-sm opacity-75">
-                {entry.data.role}
-              </div>
-              <article>
-                <entry.Content />
-              </article>
-            </li>
-          ))}
-        </ul>
-      </section>
+      <p
+        class="max-w-prose leading-relaxed text-zinc-600 dark:text-zinc-400 pt-4"
+      >
+        welcome to my digital garden. i use python, web scraping, and obsidian
+        frequently to organize and catalog information. you can find my projects and notes here, 
+        as well as my thoughts on various topics. 
+        feel free to reach out if you want to chat about anything!
+      </p>
 
-      <section class="animate space-y-6">
-        <div class="flex flex-wrap gap-y-2 items-center justify-between">
-          <h5 class="font-semibold text-black dark:text-white">
-            Recent projects
-          </h5>
-          <Link href="/projects">
-            See all projects
-          </Link>
-        </div>
-        <ul class="flex flex-col gap-4">
-          {projects.map(project => (
-            <li>
-              <ArrowCard entry={project} />
-            </li>
-          ))}
-        </ul>
-      </section>
+      <div class="flex gap-5 text-zinc-400 pt-6">
+        <a
+          href="https://github.com/jubilancy"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="github"
+          class="hover:text-black dark:hover:text-white transition-colors"
+        >
+          <Icon name="lucide:github" class="size-5" />
+        </a>
 
-      <section class="animate space-y-4">
-        <h5 class="font-semibold text-black dark:text-white">
-          Let's Connect
-        </h5>
-        <article>
-          <p>
-            If you want to get in touch with me about something or just to say hi,
-            reach out on social media or send me an email.
-          </p>
-        </article>
-        <ul class="flex flex-wrap gap-2">
-          {SOCIALS.map(SOCIAL => (
-            <li class="flex gap-x-2 text-nowrap">
-              <Link href={SOCIAL.HREF} external aria-label={`${SITE.NAME} on ${SOCIAL.NAME}`}>
-                {SOCIAL.NAME}
-              </Link>
-              {"/"}
+        <a 
+          href="#" 
+          aria-label="twitter"
+          class="hover:text-black dark:hover:text-white transition-colors"
+        >
+          <Icon name="lucide:twitter" class="size-5" />
+        </a>
+
+        <a 
+          href="#" 
+          aria-label="linkedin"
+          class="hover:text-black dark:hover:text-white transition-colors"
+        >
+          <Icon name="lucide:linkedin" class="size-5" />
+        </a>
+
+        <a 
+          href="/rss.xml" 
+          aria-label="rss feed"
+          class="hover:text-black dark:hover:text-white transition-colors"
+        >
+          <Icon name="lucide:rss" class="size-5" />
+        </a>
+      </div>
+    </section>
+
+    <hr class="border-zinc-100 dark:border-zinc-800" />
+
+    <section class="animate space-y-6">
+      <div class="flex justify-between items-baseline">
+        <h2
+          class="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-400"
+        >
+          Writing
+        </h2>
+        <a
+          href="/notes"
+          class="font-mono text-[11px] text-zinc-400 hover:text-black dark:hover:text-white transition-colors"
+        >
+          all articles →
+        </a>
+      </div>
+
+      <ul
+        class="divide-y divide-zinc-100 dark:divide-zinc-800 border-t border-zinc-100 dark:border-zinc-800"
+      >
+        {
+          posts.map((post) => (
+            <li class="group py-3">
+              <a
+                href={`/${post.collection}/${post.slug}`}
+                class="flex justify-between items-baseline no-underline"
+              >
+                <div class="flex items-baseline">
+                  <span class="text-[17px] text-black dark:text-white group-hover:text-[var(--color-accent)] transition-colors">
+                    {post.data.title}
+                  </span>
+                  <span class="text-zinc-300 dark:text-zinc-700 mx-2 text-[12px] font-mono lowercase">
+                    ↗ {post.collection}
+                  </span>
+                </div>
+                <span class="font-mono text-[13px] text-zinc-400 tabular-nums shrink-0 ml-4">
+                  {post.data.date.toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "2-digit",
+                    year: "numeric",
+                  })}
+                </span>
+              </a>
             </li>
-          ))}
-          <li class="line-clamp-1">
-            <Link href={`mailto:${SITE.EMAIL}`} aria-label={`Email ${SITE.NAME}`}>
-              {SITE.EMAIL}
-            </Link>
-          </li>
-        </ul>
-      </section>
-    </div>
-  </Container>
+          ))
+        }
+      </ul>
+    </section>
+  </div>
 </PageLayout>

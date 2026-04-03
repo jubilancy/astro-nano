@@ -1,8 +1,10 @@
+/* 1. INITIALIZE TAILWIND */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  /* 2. FONT HOOKS - Matching your exact filenames */
   @font-face {
     font-family: 'iA Writer Quattro';
     src: url('/fonts/iAWriterQuattroS-Regular.woff2') format('woff2');
@@ -27,66 +29,82 @@
     font-display: swap;
   }
 
+  /* 3. THEME VARIABLES */
   :root {
-    --color-bg-light: #fafaf9;
-    --color-bg-dark: #0a0a12;
-    --color-text-main: #1a1a2e;
+    --color-bg: #fafaf9;
     --color-text-body: #374151;
-    --color-accent: #059669; 
-    --color-border: rgba(0, 0, 0, 0.08);
+    --color-text-main: #1a1a2e;
+    --color-accent: #059669;
+    --color-border: #00000014;
+    --font-quattro: 'iA Writer Quattro', system-ui, sans-serif;
+    --font-mono: 'iA Writer Mono', monospace;
   }
 
-  body {
-    @apply flex flex-col min-h-screen antialiased transition-colors duration-300;
-    background-color: var(--color-bg-light);
+  .dark {
+    --color-bg: #0a0a12;
+    --color-text-body: #c8d1dc;
+    --color-text-main: #e2e8f0;
+    --color-accent: #34d399;
+    --color-border: #ffffff0f;
+  }
+
+  /* 4. GLOBAL TYPOGRAPHY OVERRIDES (Fixes the Body Font) */
+  html, body {
+    background-color: var(--color-bg);
     color: var(--color-text-body);
-    /* We use the name defined in @font-face above */
-    font-family: 'iA Writer Quattro', system-ui, sans-serif;
+    font-family: var(--font-quattro) !important;
     font-size: 18px;
     line-height: 1.8;
+    @apply antialiased transition-colors duration-300;
   }
 
-  @media (prefers-color-scheme: dark) {
-    body {
-      background-color: var(--color-bg-dark);
-      color: #c8d1dc;
-    }
+  /* Force the font on all content types to beat Nano's defaults */
+  p, li, input, textarea, .prose, .prose p, .prose li {
+    font-family: var(--font-quattro) !important;
   }
 
-  h1, h2, h3, h4 {
-    @apply font-semibold tracking-tight;
+  /* 5. HEADINGS (Juri Style) */
+  h1 {
+    font-size: 40px !important;
+    font-weight: 500 !important;
+    letter-spacing: -0.02em !important;
+    color: var(--color-text-main) !important;
+  }
+
+  h2, h3, h4, .font-semibold {
+    font-family: var(--font-quattro) !important;
     color: var(--color-text-main);
-    font-family: 'iA Writer Quattro', sans-serif;
+    @apply tracking-tight;
   }
-  
-  .font-mono {
-    font-family: 'iA Writer Mono', monospace !important;
+
+  /* 6. MONO ELEMENTS (Navigation & Code) */
+  pre, code, .font-mono, nav a, header a, footer a, .section-label {
+    font-family: var(--font-mono) !important;
+    text-decoration: none !important;
+    font-weight: 400 !important;
   }
 }
 
-/* ... keep the @layer components and animations from before ... */
-
 @layer components {
-  /* 4. The "Juri" Layout Containers */
+  /* 7. LAYOUT CONTAINERS */
+  .container-content {
+    @apply max-w-[960px] mx-auto px-8 w-full;
+  }
+
   .container-prose {
     @apply max-w-[720px] mx-auto px-5 w-full;
   }
 
-  .container-nav {
-    @apply max-w-[960px] mx-auto px-8 w-full;
-  }
-
-  /* 5. Astro Nano Animations */
+  /* 8. ANIMATIONS */
   .animate {
     @apply opacity-0 translate-y-3 transition-all duration-700 ease-out;
   }
-
   .animate.show {
     @apply opacity-100 translate-y-0;
   }
 }
 
-/* 6. Link & Button Logic */
+/* 9. LINKS */
 article a {
   @apply transition-colors duration-150 underline underline-offset-4;
   text-decoration-color: var(--color-border);
@@ -96,11 +114,44 @@ article a:hover {
   color: var(--color-accent);
   text-decoration-color: var(--color-accent);
 }
-
-html #back-to-top {
-  @apply opacity-0 pointer-events-none transition-opacity duration-300;
+/* 10. JURI'S HEADER & NAV POLISH */
+header {
+  @apply border-b border-zinc-100 dark:border-zinc-800;
 }
 
-html.scrolled #back-to-top {
-  @apply opacity-100 pointer-events-auto;
+header a {
+  @apply text-zinc-500 hover:text-black dark:text-zinc-400 dark:hover:text-white transition-colors duration-200;
+}
+
+/* Theme Toggle Button Style */
+#theme-toggle {
+  @apply px-2 py-0.5 border border-zinc-200 dark:border-zinc-700 rounded;
+  @apply text-[11px] font-mono lowercase tracking-tighter;
+  @apply hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-all;
+}
+
+/* 11. SUBHEADINGS & LABELS */
+.section-label {
+  @apply text-[11px] uppercase tracking-[0.2em] text-zinc-400 font-mono;
+}
+
+/* 12. HORIZONTAL RULES */
+hr {
+  @apply border-t border-zinc-100 dark:border-zinc-800 my-12;
+}
+
+/* 13. SELECTION COLOR */
+::selection {
+  background-color: rgba(52, 211, 153, 0.2); /* Soft emerald tint */
+}
+.divide-zinc-100 > :not([hidden]) ~ :not([hidden]) {
+  border-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+.dark .divide-zinc-800 > :not([hidden]) ~ :not([hidden]) {
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+:root {
+  --color-accent-yellow: #d97706; /* For Budding */
+  --color-accent-alt: #6366f1;    /* For Evergreen */
 }

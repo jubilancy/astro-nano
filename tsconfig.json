@@ -1,15 +1,13 @@
 {
-  "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
-    "strictNullChecks": true,
-    "baseUrl": ".",
+    "moduleResolution": "bundler", 
     "paths": {
+      "@/*": ["./src/*"],
       "@layouts/*": ["./src/layouts/*"],
       "@components/*": ["./src/components/*"],
-      "@styles/*": ["./src/styles/*"],
-      "@lib/*": ["./src/lib/*"],
-      "@consts": ["./src/consts.ts"],
-      "@/*": ["./src/*"]
-    }
+      "@consts": ["./src/consts.ts"]
+    },
+    // Add this to get rid of the specific warning you're seeing:
+    "ignoreDeprecations": "5.0" 
   }
 }
