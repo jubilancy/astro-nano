@@ -1,0 +1,15 @@
+---
+import { Gist as GistEmbed } from 'astro-embed';
+
+// If you want a local variable, give it a different name 
+// to avoid "Import declaration conflicts" or "Invalid component" errors.
+const myGistData = "some local value"; 
+---
+
+<GistEmbed id="https://gist.github.com/jubilancy/cf3043e40f6cded19c43b1cd9dafeeac" />
+
+<hr />
+
+<p>View the raw gist here: <a href="https://gist.github.com/jubilancy/cf3043e40f6cded19c43b1cd9dafeeac">Gist Link</a></p>
+
+<script is:inline src="https://gist.github.com/jubilancy/cf3043e40f6cded19c43b1cd9dafeeac.js"></script>

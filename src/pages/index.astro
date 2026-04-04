@@ -2,94 +2,44 @@
 import { getCollection } from "astro:content";
 import PageLayout from "@layouts/PageLayout.astro";
 import { SITE } from "@consts";
-// Added the icon import here
 import { Icon } from "astro-icon/components";
 
-// 1. List every collection you want to display
 const collectionsToFetch = [
-  "blog",
-  "notes",
-  "guides",
-  "tools",
-  "recipes",
-  "research",
-  "lists",
-  "links",
-  "favorite",
-  "post",
-  "archive",
-  "computer",
-  "series",
-  "packages",
-  "blogroll",
+  "blog", "notes", "guides", "tools", "recipes", "research", 
+  "lists", "links", "favorite", "post", "archive", "computer", 
+  "series", "packages", "blogroll"
 ];
 
-// 2. Fetch all collections simultaneously
 const allCollections = await Promise.all(
   collectionsToFetch.map((name) => getCollection(name as any)),
 );
 
-// 3. Flatten, filter, and sort across ALL folders
 const posts = (allCollections.flat() as any[])
   .filter((post) => !post.data.draft)
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .sort((a, b) => {
+    const titleA = (a.data.title || a.slug).toLowerCase();
+    const titleB = (b.data.title || b.slug).toLowerCase();
+    return titleA.localeCompare(titleB);
+  })
   .slice(0, 10);
 ---
 
 <PageLayout title="Home" description={SITE.DESCRIPTION}>
   <div class="space-y-16">
     <section class="animate space-y-4">
-      <h1>
-        hi, i'm eliana (✿◠‿◠)
-      </h1>
-
-      <div
-        class="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-400"
-      >
+      <h1>hi, i'm eliana (✿◠‿◠)</h1>
+      <div class="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-400">
         𓆝 𓆟 𓆞 𓆟 𓆝 𓆟 𓆞 𓆟 𓆝 𓆟 𓆞 𓆟 𓆝 𓆟 𓆞 𓆟 𓆝
       </div>
-
-      <p
-        class="max-w-prose leading-relaxed text-zinc-600 dark:text-zinc-400 pt-4"
-      >
+      <p class="max-w-prose leading-relaxed text-zinc-600 dark:text-zinc-400 pt-4">
         welcome to my digital garden. i use python, web scraping, and obsidian
-        frequently to organize and catalog information. you can find my projects and notes here, 
-        as well as my thoughts on various topics. 
-        feel free to reach out if you want to chat about anything!
+        frequently to organize and catalog information.
       </p>
-
       <div class="flex gap-5 text-zinc-400 pt-6">
-        <a
-          href="https://github.com/jubilancy"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="github"
-          class="hover:text-black dark:hover:text-white transition-colors"
-        >
+        <a href="https://github.com/jubilancy" aria-label="github" class="hover:text-black dark:hover:text-white transition-colors">
           <Icon name="lucide:github" class="size-5" />
         </a>
-
-        <a 
-          href="#" 
-          aria-label="twitter"
-          class="hover:text-black dark:hover:text-white transition-colors"
-        >
-          <Icon name="lucide:twitter" class="size-5" />
-        </a>
-
-        <a 
-          href="#" 
-          aria-label="linkedin"
-          class="hover:text-black dark:hover:text-white transition-colors"
-        >
-          <Icon name="lucide:linkedin" class="size-5" />
-        </a>
-
-        <a 
-          href="/rss.xml" 
-          aria-label="rss feed"
-          class="hover:text-black dark:hover:text-white transition-colors"
-        >
+        <a href="/rss.xml" aria-label="rss feed" class="hover:text-black dark:hover:text-white transition-colors">
           <Icon name="lucide:rss" class="size-5" />
         </a>
       </div>
@@ -99,48 +49,28 @@ const posts = (allCollections.flat() as any[])
 
     <section class="animate space-y-6">
       <div class="flex justify-between items-baseline">
-        <h2
-          class="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-400"
-        >
-          Writing
-        </h2>
-        <a
-          href="/notes"
-          class="font-mono text-[11px] text-zinc-400 hover:text-black dark:hover:text-white transition-colors"
-        >
-          all articles →
+        <h2 class="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-400">Latest</h2>
+        <a href="/notes" class="font-mono text-[11px] text-zinc-400 hover:text-black dark:hover:text-white transition-colors">
+          view all →
         </a>
       </div>
 
-      <ul
-        class="divide-y divide-zinc-100 dark:divide-zinc-800 border-t border-zinc-100 dark:border-zinc-800"
-      >
-        {
-          posts.map((post) => (
-            <li class="group py-3">
-              <a
-                href={`/${post.collection}/${post.slug}`}
-                class="flex justify-between items-baseline no-underline"
-              >
-                <div class="flex items-baseline">
-                  <span class="text-[17px] text-black dark:text-white group-hover:text-[var(--color-accent)] transition-colors">
-                    {post.data.title}
-                  </span>
-                  <span class="text-zinc-300 dark:text-zinc-700 mx-2 text-[12px] font-mono lowercase">
-                    ↗ {post.collection}
-                  </span>
-                </div>
-                <span class="font-mono text-[13px] text-zinc-400 tabular-nums shrink-0 ml-4">
-                  {post.data.date.toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "2-digit",
-                    year: "numeric",
-                  })}
+      <ul class="divide-y divide-zinc-100 dark:divide-zinc-800 border-t border-zinc-100 dark:border-zinc-800">
+        {posts.map((post) => (
+          <li class="group py-3">
+            <a href={`/${post.collection}/${post.slug}`} class="flex justify-between items-baseline no-underline">
+              <div class="flex items-baseline overflow-hidden">
+                <span class="text-[17px] text-black dark:text-white group-hover:text-[var(--color-accent)] transition-colors truncate">
+                  {post.data.title || post.slug.replace(/-/g, ' ')}
                 </span>
-              </a>
-            </li>
-          ))
-        }
+                <span class="text-zinc-300 dark:text-zinc-700 mx-2 text-[12px] font-mono lowercase shrink-0">
+                  ↗ {post.collection}
+                </span>
+              </div>
+              <span class="text-zinc-300 dark:text-zinc-700 text-xs font-mono">view</span>
+            </a>
+          </li>
+        ))}
       </ul>
     </section>
   </div>

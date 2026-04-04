@@ -1,0 +1,111 @@
+---
+import Layout from '../layouts/PageLayout.astro';
+---
+
+<Layout title="URL to Markdown | Eliana's Tools">
+  <main class="tool-wrapper">
+    <section class="hero">
+      <h1>URL 2 Markdown</h1>
+      <p>Convert any article or Apple documentation into clean Markdown.</p>
+    </section>
+
+    <div class="converter-box">
+      <div class="input-group">
+        <input 
+          type="url" 
+          id="urlInput" 
+          placeholder="https://developer.apple.com/documentation/..." 
+          aria-label="URL to convert"
+        />
+        <button id="convertBtn">Convert</button>
+      </div>
+
+      <div class="output-header">
+        <span>Markdown Output</span>
+        <button id="copyBtn" class="secondary">Copy</button>
+      </div>
+      
+      <textarea id="output" readonly placeholder="Your Markdown will appear here..."></textarea>
+    </div>
+  </main>
+
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/readability/0.5.0/Readability.min.js"></script>
+  <script is:inline src="https://unpkg.com/turndown/dist/turndown.js"></script>
+  <script is:inline src="https://unpkg.com/turndown-plugin-gfm/dist/turndown-plugin-gfm.js"></script>
+
+  <script is:inline>
+    const convertBtn = document.getElementById('convertBtn');
+    const urlInput = document.getElementById('urlInput');
+    const output = document.getElementById('output');
+    const copyBtn = document.getElementById('copyBtn');
+
+    // Initialize Turndown with GFM (Tables) support
+    const turndownService = new TurndownService({ 
+      headingStyle: 'atx',
+      codeBlockStyle: 'fenced' 
+    });
+    turndownService.use(turndownPluginGfm.gfm);
+
+    // CUSTOM RULE: Apple Dev Docs Filters (From your fork)
+    turndownService.addRule('appleDocs', {
+      filter: (node) => {
+        // Remove Apple's sidebars, navs, and metadata footers
+        return (
+          node.classList.contains('nav-hierarchy') || 
+          node.classList.contains('metadata') ||
+          node.tagName === 'NAV'
+        );
+      },
+      replacement: () => ''
+    });
+
+    convertBtn.addEventListener('click', async () => {
+      const targetUrl = urlInput.value;
+      if (!targetUrl) return alert("Enter a URL first!");
+
+      output.value = "Fetching and cleaning content...";
+
+      try {
+        // Using a public CORS proxy to bypass browser security
+        const proxy = "https://corsproxy.io/?";
+        const response = await fetch(proxy + encodeURIComponent(targetUrl));
+        const html = await response.text();
+
+        // 1. Parse into a virtual Document
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+
+        // 2. Use Mozilla Readability to find the "Main Content"
+        const reader = new Readability(doc);
+        const article = reader.parse();
+
+        if (!article) throw new Error("Could not parse article content.");
+
+        // 3. Convert that clean HTML to Markdown
+        const markdown = turndownService.turndown(article.content);
+        
+        output.value = `# ${article.title}\n\n${markdown}`;
+      } catch (err) {
+        output.value = `Error: ${err.message}\n\nNote: Some sites block automated fetching.`;
+      }
+    });
+
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(output.value);
+      copyBtn.innerText = "Copied!";
+      setTimeout(() => copyBtn.innerText = "Copy", 2000);
+    });
+  </script>
+
+  <style>
+    /* Styling to match your eliana.lol aesthetic */
+    .tool-wrapper { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+    .converter-box { background: var(--bg-secondary, #f9f9f9); padding: 2rem; border-radius: 12px; border: 1px solid #ddd; }
+    .input-group { display: flex; gap: 10px; margin-bottom: 1.5rem; }
+    input { flex: 1; padding: 0.8rem; border-radius: 6px; border: 1px solid #ccc; font-family: inherit; }
+    textarea { width: 100%; height: 400px; padding: 1rem; border-radius: 6px; border: 1px solid #ccc; font-family: monospace; resize: vertical; }
+    .output-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; font-weight: bold; }
+    button { cursor: pointer; padding: 0.8rem 1.5rem; border-radius: 6px; border: none; background: #000; color: #fff; }
+    button.secondary { background: #eee; color: #333; padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+  </style>
+</Layout>

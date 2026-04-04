@@ -1,57 +1,62 @@
 import { defineCollection, z } from "astro:content";
 
-// 1. Define a Reusable Schema for your "Garden" content
-// This covers: notes, recipes, research, tools, guides, etc.
-const gardenSchema = z.object({
-  title: z.string(),
-  description: z.string(),
-  date: z.coerce.date(),
-  draft: z.boolean().optional(),
-  maturity: z.enum(["seedling", "budding", "evergreen"]).optional(),
+// 1. Minimalist Garden Schema (Everything optional for easy drag-and-drop)
+const gardenSchema = defineCollection({
+  type: "content",
+  schema: z.object({
+    title: z.string().optional(),
+    description: z.string().optional(),
+    date: z.coerce.date().optional(),
+    draft: z.boolean().optional(),
+    maturity: z.enum(["seedling", "budding", "evergreen"]).optional(),
+  }),
 });
 
-// 2. Define specialized schemas
-const projectSchema = z.object({
-  title: z.string(),
-  description: z.string(),
-  date: z.coerce.date(),
-  draft: z.boolean().optional(),
-  demoURL: z.string().optional(),
-  repoURL: z.string().optional()
+// 2. Minimalist Project Schema
+const projectSchema = defineCollection({
+  type: "content",
+  schema: z.object({
+    title: z.string().optional(),
+    description: z.string().optional(),
+    date: z.coerce.date().optional(),
+    draft: z.boolean().optional(),
+    demoURL: z.string().optional(),
+    repoURL: z.string().optional()
+  }),
 });
 
-const workSchema = z.object({
-  company: z.string(),
-  role: z.string(),
-  dateStart: z.coerce.date(),
-  dateEnd: z.union([z.coerce.date(), z.string()]),
+// 3. Minimalist Work Schema
+const workSchema = defineCollection({
+  type: "content",
+  schema: z.object({
+    title: z.string().optional(), // Added for consistency with your home page list
+    company: z.string().optional(),
+    role: z.string().optional(),
+    dateStart: z.coerce.date().optional(),
+    dateEnd: z.union([z.coerce.date(), z.string()]).optional(),
+  }),
 });
 
-// 3. Map your folders to the schemas
+// 4. Map your folders to the schemas
 export const collections = {
-  // Existing
-  blog: defineCollection({ type: "content", schema: gardenSchema }),
-  work: defineCollection({ type: "content", schema: workSchema }),
-  projects: defineCollection({ type: "content", schema: projectSchema }),
-
-  // Your New Folders (Using the Garden Schema)
-  notes: defineCollection({ type: "content", schema: gardenSchema }),
-  guides: defineCollection({ type: "content", schema: gardenSchema }),
-  tools: defineCollection({ type: "content", schema: gardenSchema }),
-  recipes: defineCollection({ type: "content", schema: gardenSchema }),
-  research: defineCollection({ type: "content", schema: gardenSchema }),
-  lists: defineCollection({ type: "content", schema: gardenSchema }),
-  links: defineCollection({ type: "content", schema: gardenSchema }),
-  favorite: defineCollection({ type: "content", schema: gardenSchema }),
-  post: defineCollection({ type: "content", schema: gardenSchema }),
-  archive: defineCollection({ type: "content", schema: gardenSchema }),
-  drafts: defineCollection({ type: "content", schema: gardenSchema }),
-  computer: defineCollection({ type: "content", schema: gardenSchema }),
-  series: defineCollection({ type: "content", schema: gardenSchema }),
-  packages: defineCollection({ type: "content", schema: gardenSchema }),
-  blogroll: defineCollection({ type: "content", schema: gardenSchema }),
-  
-  // Specialty folders
-  gallery: defineCollection({ type: "content", schema: gardenSchema }), 
-  pages: defineCollection({ type: "content", schema: gardenSchema }),
+  blog: gardenSchema,
+  work: workSchema,
+  projects: projectSchema,
+  notes: gardenSchema,
+  guides: gardenSchema,
+  tools: gardenSchema,
+  recipes: gardenSchema,
+  research: gardenSchema,
+  lists: gardenSchema,
+  links: gardenSchema,
+  favorite: gardenSchema,
+  post: gardenSchema,
+  archive: gardenSchema,
+  drafts: gardenSchema,
+  computer: gardenSchema,
+  series: gardenSchema,
+  packages: gardenSchema,
+  blogroll: gardenSchema,
+  gallery: gardenSchema, 
+  pages: gardenSchema,
 };

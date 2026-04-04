@@ -1,15 +1,16 @@
 ---
-import { getCollection, type CollectionKey } from "astro:content";
+import { type CollectionEntry, getCollection } from "astro:content";
 import PageLayout from "@layouts/PageLayout.astro";
-import { formatDate } from "../../lib/utils"; // Fixed the path error from earlier!
+import BackToPrev from "@components/BackToPrev.astro";
 
 export async function getStaticPaths() {
-  const categories: CollectionKey[] = [
+  const categories = [
     "blog", "notes", "guides", "tools", "recipes", "research", 
-    "lists", "links", "favorite", "projects", "work", "archive"
+    "lists", "links", "favorite", "post", "archive", "computer", 
+    "series", "packages", "blogroll", "projects", "work", "gallery", "pages"
   ];
 
-  const paths = await Promise.all(
+  const allPaths = await Promise.all(
     categories.map(async (category) => {
       const entries = await getCollection(category as any);
       return entries.map((entry) => ({
@@ -19,40 +20,35 @@ export async function getStaticPaths() {
     })
   );
 
-  return paths.flat();
+  return allPaths.flat();
 }
+
+type Props = {
+  entry: CollectionEntry<any>;
+};
 
 const { entry } = Astro.props;
 const { Content } = await entry.render();
 ---
 
-<PageLayout title={entry.data.title} description={entry.data.description}>
-  <article class="animate">
-    <div class="flex items-center gap-2 font-mono text-[12px] text-zinc-400 mb-8">
-      <a href={`/${Astro.params.category}`} class="hover:text-[var(--color-accent)]">
-        {Astro.params.category}
-      </a>
-      <span>/</span>
-      <span class="text-zinc-800 dark:text-zinc-200">{entry.data.title}</span>
+<PageLayout title={entry.data.title || entry.slug} description={entry.data.description || ""}>
+  <div class="container">
+    <div class="animate">
+      <BackToPrev href={`/${entry.collection}`}>
+        Back to {entry.collection}
+      </BackToPrev>
     </div>
 
-    <header class="mb-12">
-      <h1 class="text-3xl font-medium mb-2">{entry.data.title}</h1>
-      <div class="flex gap-2 text-sm text-zinc-500 font-mono">
-        <time datetime={entry.data.date.toISOString()}>
-          {formatDate(entry.data.date)}
-        </time>
-        {entry.data.maturity && (
-          <>
-            <span>•</span>
-            <span class="capitalize">{entry.data.maturity}</span>
-          </>
-        )}
+    <div class="space-y-1 my-10">
+      <div class="animate">
+        <h1 class="text-3xl font-semibold text-black dark:text-white">
+          {entry.data.title || entry.slug.replace(/-/g, ' ')}
+        </h1>
       </div>
-    </header>
-
-    <div class="prose dark:prose-invert max-w-none">
-      <Content />
     </div>
-  </article>
+
+    <article class="animate prose dark:prose-invert max-w-none">
+      <Content />
+    </article>
+  </div>
 </PageLayout>

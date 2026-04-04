@@ -44,4 +44,53 @@ const { title, description } = Astro.props;
 
     <Footer />
   </body>
+  <script>
+  function addCopyButtons() {
+    const blocks = document.querySelectorAll("pre");
+
+    blocks.forEach((block) => {
+      // Check if button already exists to avoid duplicates
+      if (block.querySelector(".copy-code")) return;
+
+      const button = document.createElement("button");
+      button.className = "copy-code";
+      button.type = "button";
+      button.innerHTML = "Copy";
+      
+      block.appendChild(button);
+
+      button.addEventListener("click", async () => {
+        const code = block.querySelector("code");
+        if (code) {
+          await navigator.clipboard.writeText(code.innerText);
+          button.innerText = "Copied!";
+          setTimeout(() => (button.innerText = "Copy"), 2000);
+        }
+      });
+    });
+  }
+
+  // Run on initial load
+  addCopyButtons();
+  // Run on View Transitions (if you use them)
+  document.addEventListener("astro:after-swap", addCopyButtons);
+</script>
+
+<style is:global>
+  /* Add styling for the copy button here if not in a separate component */
+  pre { position: relative; }
+  .copy-code {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 10px;
+    text-transform: uppercase;
+  }
+</style>
 </html>

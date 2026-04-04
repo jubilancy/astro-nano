@@ -1,0 +1,43 @@
+<script>
+  const copyButtons = document.querySelectorAll(".copy-code");
+
+  copyButtons.forEach((button) => {
+    button.addEventListener("click", async () => {
+      const container = button.parentElement;
+      const code = container?.querySelector("code");
+      
+      if (code) {
+        await navigator.clipboard.writeText(code.innerText);
+        button.textContent = "Copied!";
+        setTimeout(() => { button.textContent = "Copy"; }, 2000);
+      }
+    });
+  });
+</script>
+
+<style is:global>
+  /* This targets the 0-margin pre tags Shiki generates */
+  pre {
+    position: relative;
+    padding-top: 2.5rem !important;
+  }
+
+  .copy-code {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: #27272a;
+    color: #a1a1aa;
+    border: 1px solid #3f3f46;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    z-index: 10;
+  }
+
+  .copy-code:hover {
+    background: #3f3f46;
+    color: white;
+  }
+</style>

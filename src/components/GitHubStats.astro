@@ -1,0 +1,107 @@
+---
+/**
+ * GitHubStats.astro
+ * Fetches live data from GitHub API during build time.
+ */
+import { Octokit } from "@octokit/rest";
+
+// Initialize Octokit. 
+// Uses GITHUB_TOKEN from your .env file to avoid rate limits.
+const octokit = new Octokit({
+  auth: import.meta.env.GITHUB_TOKEN, 
+});
+
+// Fetch User Data for 'jubilancy'
+const { data: user } = await octokit.rest.users.getByUsername({
+  username: "jubilancy",
+});
+
+// Fetch Repository Data for 'eliana.lol'
+const { data: repo } = await octokit.rest.repos.get({
+  owner: "jubilancy",
+  repo: "eliana.lol",
+});
+---
+
+<div class="stats-card">
+  <div class="header">
+    <span class="status-dot"></span>
+    <h3>GitHub Pulse</h3>
+  </div>
+  
+  <ul>
+    <li>
+      <span class="label">Followers</span>
+      <span class="value">{user.followers}</span>
+    </li>
+    <li>
+      <span class="label">Site Stars</span>
+      <span class="value">{repo.stargazers_count}</span>
+    </li>
+    <li>
+      <span class="label">Public Repos</span>
+      <span class="value">{user.public_repos}</span>
+    </li>
+  </ul>
+</div>
+
+<style>
+  .stats-card {
+    padding: 1.25rem;
+    background: rgba(40, 42, 54, 0.6); /* Dracula Background */
+    border: 1px solid #44475a;
+    border-radius: 12px;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    max-width: 320px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #44475a;
+    padding-bottom: 0.5rem;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #50fa7b; /* Dracula Green */
+    border-radius: 50%;
+    box-shadow: 0 0 8px #50fa7b;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #6272a4; /* Dracula Comment Color */
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #f8f8f2;
+  }
+
+  .label {
+    color: #bd93f9; /* Dracula Purple */
+  }
+
+  .value {
+    font-weight: bold;
+    color: #ff79c6; /* Dracula Pink */
+  }
+</style>
