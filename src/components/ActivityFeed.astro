@@ -1,0 +1,118 @@
+---
+import Parser from 'rss-parser';
+// 1. Import the Item type from the library
+import type { Item } from 'rss-parser';
+
+const parser = new Parser();
+// 2. Tell TypeScript this is an array of RSS Items
+let latestItems: Item[] = [];
+
+try {
+  const feed = await parser.parseURL('https://github.com/jubilancy.atom');
+  latestItems = feed.items.slice(0, 5); 
+} catch (error) {
+  console.error("Error fetching GitHub activity feed:", error);
+}
+---
+
+<section class="activity-feed">
+  <div class="feed-header">
+    <div class="pulse-icon"></div>
+    <h3>Recent Pulses</h3>
+  </div>
+
+  <div class="timeline">
+    {latestItems.length > 0 ? (
+      latestItems.map((item) => (
+        <div class="timeline-item">
+          <span class="date">
+            {item.isoDate ? new Date(item.isoDate).toLocaleDateString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric'
+            }) : 'Recent'}
+          </span>
+          <p class="content" set:html={item.title}></p>
+          <a href={item.link} class="link" target="_blank" rel="noopener noreferrer">
+            View Activity →
+          </a>
+        </div>
+      ))
+    ) : (
+      <p class="error-msg">Feed temporarily unavailable.</p>
+    )}
+  </div>
+</section>
+
+<style>
+  .activity-feed {
+    border-left: 2px solid #44475a; /* Dracula Comment Color */
+    padding-left: 1.5rem;
+    margin: 2rem 0;
+    max-width: 500px;
+  }
+
+  .feed-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+
+  .pulse-icon {
+    width: 10px;
+    height: 10px;
+    background: #ff79c6; /* Dracula Pink */
+    border-radius: 50%;
+    box-shadow: 0 0 8px #ff79c6;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #bd93f9; /* Dracula Purple */
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .timeline-item {
+    margin-bottom: 2rem;
+    position: relative;
+  }
+
+  .date {
+    font-size: 0.7rem;
+    color: #6272a4;
+    font-family: 'JetBrains Mono', monospace;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .content {
+    font-size: 0.95rem;
+    line-height: 1.4;
+    margin: 0;
+    color: #f8f8f2;
+  }
+
+  /* Styling the links inside the GitHub Atom title */
+  .content :global(a) {
+    color: #8be9fd; /* Dracula Cyan */
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .link {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 0.8rem;
+    color: #50fa7b; /* Dracula Green */
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .link:hover {
+    text-decoration: underline;
+  }
+</style>

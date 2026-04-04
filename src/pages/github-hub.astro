@@ -1,0 +1,141 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import GitHubStats from '../components/GitHubStats.astro';
+import ActivityFeed from '../components/ActivityFeed.astro';
+import { Gist as GistEmbed } from 'astro-embed';
+
+const scraperGist = "https://gist.github.com/jubilancy/cf3043e40f6cded19c43b1cd9dafeeac";
+---
+
+<PageLayout title="GitHub Hub">
+  <main class="hub-container">
+    <header class="hub-header">
+      <div class="header-content">
+        <h1>Developer Pulse</h1>
+        <p>Real-time activity and interactive social metrics.</p>
+      </div>
+      
+      <div class="header-actions">
+        <h2 class="widget-title">05. Connect</h2>
+        <div class="github-buttons">
+          <a class="github-button" href="https://github.com/jubilancy" data-color-scheme="no-preference: dark; light: light; dark: dark;" data-size="large" aria-label="Follow @jubilancy on GitHub">Follow @jubilancy</a>
+          <a class="github-button" href="https://github.com/jubilancy/eliana.lol" data-color-scheme="no-preference: dark; light: light; dark: dark;" data-icon="octicon-star" data-size="large" aria-label="Star jubilancy/eliana.lol on GitHub">Star Site</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="hub-grid">
+      
+      <section class="widget-section">
+        <h2 class="widget-title">01. Live Metrics</h2>
+        <GitHubStats />
+      </section>
+
+      <section class="widget-section">
+        <h2 class="widget-title">02. Recent Activity</h2>
+        <ActivityFeed />
+      </section>
+
+      <section class="widget-section wide">
+        <h2 class="widget-title">06. Profile Spotlight</h2>
+        <div class="card-wrapper">
+           <div class="repo-card" data-repo="jubilancy/jubilancy"></div>
+        </div>
+      </section>
+
+      <section class="widget-section wide">
+        <h2 class="widget-title">07. Social Stream</h2>
+        <div id="social-gems-feed" class="social-wrapper"></div>
+      </section>
+
+      <section class="widget-section wide">
+        <h2 class="widget-title">03. Scraper Logic</h2>
+        <div class="code-wrapper">
+          <pre><code>{`import requests
+from bs4 import BeautifulSoup
+
+def get_book_data(isbn):
+    url = f"https://www.abebooks.com/servlet/SearchResults?isbn={isbn}"
+    print(f"Fetching data for {isbn}...")`}</code></pre>
+        </div>
+      </section>
+
+      <section class="widget-section wide">
+        <h2 class="widget-title">04. Gist Embed</h2>
+        <div class="gist-wrapper">
+          <GistEmbed id={scraperGist} />
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+  <script is:inline src="https://tarptaeya.github.io/repo-card/repo-card.js"></script>
+  <script is:inline src="https://cdn.jsdelivr.net/gh/social-gems/widget@master/dist/social-gems.js"></script>
+
+  <script is:inline>
+    // Initialize Social-Gems
+    if (window.SocialGems) {
+      window.SocialGems.init({
+        target: '#social-gems-feed',
+        username: 'jubilancy',
+        limit: 6,
+        theme: 'dark'
+      });
+    }
+  </script>
+</PageLayout>
+
+<style>
+  .hub-container { max-width: 1000px; margin: 0 auto; padding: 2rem 1rem; }
+  
+  .hub-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: flex-end;
+    margin-bottom: 3rem; 
+    border-bottom: 1px solid #44475a; 
+    padding-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+
+  .hub-header h1 { font-size: 2.5rem; color: #bd93f9; margin: 0; }
+  .hub-header p { color: #6272a4; font-family: 'JetBrains Mono', monospace; }
+
+  .github-buttons { display: flex; gap: 10px; margin-top: 10px; }
+
+  .hub-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2.5rem; }
+  .widget-section.wide { grid-column: span 2; }
+
+  .widget-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    color: #50fa7b;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .widget-title::after { content: ""; flex-grow: 1; height: 1px; background: #44475a; }
+
+  .card-wrapper, .social-wrapper, .code-wrapper, .gist-wrapper {
+    border-radius: 12px;
+    border: 1px solid #44475a;
+    background: rgba(40, 42, 54, 0.3);
+    padding: 1.5rem;
+  }
+
+  /* Style adjustment for the interactive repo card */
+  .repo-card { margin: 0 auto; }
+
+  @media (max-width: 768px) {
+    .hub-grid { grid-template-columns: 1fr; }
+    .widget-section.wide { grid-column: span 1; }
+    .hub-header { flex-direction: column; align-items: flex-start; }
+  }
+</style>
