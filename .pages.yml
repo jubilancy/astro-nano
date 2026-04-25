@@ -1,0 +1,75 @@
+media:
+  input: static/img
+  output: /img
+
+content:
+  # --- Main Site Structure ---
+  - name: blog
+    label: Blog
+    type: collection
+    path: content/blog
+    fields:
+      - name: title
+        type: string
+      - name: date
+        type: date
+      - name: body
+        type: rich-text
+
+  # Top-level folders and standalone pages
+  - name: main_pages
+    label: Main Site Pages
+    type: collection
+    path: content
+    exclude: [blog, favorite, tags, sitemap]
+    fields:
+      - name: title
+        type: string
+      - name: body
+        type: rich-text
+
+  # --- Metadata & Navigation ---
+  # Special page for Sitemap
+  - name: sitemap_page
+    label: Sitemap Configuration
+    type: file
+    path: content/sitemap.md
+    fields:
+      - name: title
+        type: string
+      - name: lastmod
+        type: date
+      - name: body
+        type: rich-text
+
+  # Collection for Tags management
+  - name: tags
+    label: Tags / Taxonomy
+    type: collection
+    path: content/tags
+    fields:
+      - name: title
+        type: string
+      - name: description
+        type: text
+
+  # --- Favorite Sub-directories ---
+  - name: favorite_links
+    label: "Fav: Links"
+    type: collection
+    path: content/favorite/links
+    fields:
+      - name: title
+        type: string
+      - name: body
+        type: rich-text
+
+  - name: favorite_tools
+    label: "Fav: Tools"
+    type: collection
+    path: content/favorite/tools
+    fields:
+      - name: title
+        type: string
+      - name: body
+        type: rich-text
